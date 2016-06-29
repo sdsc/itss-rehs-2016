@@ -36,11 +36,14 @@ void serialEvent(){
       strValue[index] = 0;
       newTemp = atoi(strValue);
       Serial.print(newTemp);
-      if(newTemp < 50 && newTemp !=0){
-        strip.setPixelColor(light, strip.Color(0,0,255)); 
+      if(newTemp <= 50 && newTemp !=0){
+        strip.setPixelColor(light, strip.Color(0,255,0));
       }
-      else if(newTemp > 50){
+      else if(newTemp >= 85){
         strip.setPixelColor(light, strip.Color(255,0,0));
+      }
+      else if(newTemp > 50 && newTemp < 85){
+        strip.setPixelColor(light, strip.Color(0,0,255));
       }
       else{
         

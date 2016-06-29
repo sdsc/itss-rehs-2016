@@ -1,13 +1,16 @@
 import serial
 ser = serial.Serial('/dev/cu.usbmodem1421',9600)
-print ser.name
 ser.write('c')
 import csv
 import time
+x=0
 with open('/Users/Zoe/Documents/GraphiteDataTest.csv', 'rb') as f:
     reader = csv.reader(f)
     for row in reader:
-        print row[2]
-        temp = row[2]
-        print ser.write(temp + ";")
-        time.sleep(.5)
+       if x % 20 == 0:
+            temp = row[2]
+            print row
+            ser.write(temp + ";")
+            time.sleep(.5)
+       x += 1
+

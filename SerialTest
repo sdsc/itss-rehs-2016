@@ -1,0 +1,13 @@
+import serial
+ser = serial.Serial('/dev/cu.usbmodem1421',9600)
+print ser.name
+ser.write('c')
+import csv
+import time
+with open('/Users/Zoe/Documents/GraphiteDataTest.csv', 'rb') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        print row[2]
+        temp = row[2]
+        print ser.write(temp + ";")
+        time.sleep(.5)

@@ -5,7 +5,7 @@ import urllib2
 import csv
 import time
 x=4
-url ="https://graphite.sdsc.edu/render/?target=hosts.hpc.comet-02*.sensors.socket0.cpu0.temp&format=csv"
+url ="https://graphite.sdsc.edu/render/?target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle&format=csv"
 response = urllib2.urlopen(url)
 cr = csv.reader(response)
 for row in cr:

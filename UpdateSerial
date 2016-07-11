@@ -13,7 +13,7 @@ cr = csv.reader(response)
 for row in cr:
     if x > 8494:
         #8640
-        temp = str(int(decimal.Decimal(row[2])))
+        temp = row[2]
         print temp
 
         #last_values = temp[-144:]
@@ -21,6 +21,6 @@ for row in cr:
         if temp == '':
             print ser.write('0.0')
         else:
-            ser.write(temp+";")
+            ser.write(str(int(decimal.Decimal(temp)))+";")
         time.sleep(.5)
     x += 1

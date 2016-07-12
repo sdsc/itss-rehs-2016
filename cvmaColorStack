@@ -1,26 +1,53 @@
+#
+# Everything commented out is what is used for the alternate
+# method of reading the code using csv
+# This is reading JSON
+
+
 import serial
 import decimal
-import json
-import urllib2
-import time
 
 ser = serial.Serial('/dev/cu.usbmodem1421',9600)
-url ="https://graphite.sdsc.edu/render/?width=586&height=308&_salt=1467827717.345&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_wio&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_user&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_system&areaMode=stacked&format=json"
+
+import urllib2
+import csv
+import json
+import time
+x=4
+url ="https://graphite.sdsc.edu/render/?width=586&height=308&_salt=1467827717.345" \
+     "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle" \
+     "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_wio" \
+     "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_user" \
+     "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_system&areaMode=stacked&format=csv"
+
+url2 = "https://graphite.sdsc.edu/render/?width=586&height=308&_salt=1467827717.345" \
+      "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle" \
+      "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_wio" \
+      "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_user" \
+      "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_system&areaMode=stacked&format=json"
 
 response = urllib2.urlopen(url)
-data = json.load(response)
+response2 = urllib2.urlopen(url2)
 
-i=0
-output = ""
+cr = csv.reader(response)
+data = json.load(response2)
+
+# for row in cr:
+#     if x % 8640==0:
+#         #8640
+#         color = str(int(decimal.Decimal(row[2])))
+#         print color
+#         ser.write(color+";")
+#         time.sleep(5)
+#     x += 1
+
+i = 0
 while i < 4:
     color = data[i]['datapoints'][len(data[i]['datapoints'])-2][0]
     print color
-    #print type(color)
-    if color == None:
+    if color is None:
         ser.write('0.0')
     else:
-        output= output + str(int(color))+";"
-    i = i+1
-print output
-print ser.write(output)
-
+        ser.write(str(int(decimal.Decimal(color))) + ";")
+    time.sleep(.5)
+    i = i + 1

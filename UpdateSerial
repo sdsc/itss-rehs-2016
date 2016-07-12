@@ -1,3 +1,8 @@
+#
+# Everything commented out is what is used for the alternate
+# method of reading the code using csv
+# This is reading JSON
+
 import serial
 import decimal
 
@@ -5,22 +10,37 @@ ser = serial.Serial('/dev/cu.usbmodem1421',9600)
 
 import urllib2
 import csv
+import json
 import time
-x=0
-url ="https://graphite.sdsc.edu/render/?target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle&format=csv"
-response = urllib2.urlopen(url)
-cr = csv.reader(response)
-for row in cr:
-    if x > 8494:
-        #8640
-        temp = row[2]
-        print temp
+x=8495
+#url ="https://graphite.sdsc.edu/render/?target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle&format=csv"
+url2 ="https://graphite.sdsc.edu/render/?target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle&format=json"
 
-        #last_values = temp[-144:]
-        #print last_values
-        if temp == '':
-            print ser.write('0.0')
-        else:
-            ser.write(str(int(decimal.Decimal(temp)))+";")
-        time.sleep(.5)
+#response = urllib2.urlopen(url)
+response2 = urllib2.urlopen(url2)
+
+#cr = csv.reader(response)
+data = json.load(response2)
+
+#for row in cr:
+    #if x > 8494:
+while x > 8494:
+    #8640
+    #temp = row[2]
+    temp2 = data[0]['datapoints'][x][0]
+    #print temp
+    print temp2
+
+    # if temp == '':
+    #     print ser.write('0.0')
+    # else:
+    #     ser.write(str(int(decimal.Decimal(temp)))+";")
+    # time.sleep(.5)
+
+    if temp2 is None:
+        ser.write('0.0')
+    else:
+        ser.write(str(int(decimal.Decimal(temp2))) + ";")
+    time.sleep(.5)
     x += 1
+

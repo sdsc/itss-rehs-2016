@@ -13,8 +13,8 @@ import csv
 import json
 import time
 x=8495
-#url ="https://graphite.sdsc.edu/render/?target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle&format=csv"
-url2 ="https://graphite.sdsc.edu/render/?target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle&format=json"
+#url ="https://graphite.sdsc.edu/render/?target=hosts.hpc.comet-16*.sensors.socket*.cpu1.temp&format=csv"
+url2 ="https://graphite.sdsc.edu/render/?target=hosts.hpc.comet-16*.sensors.socket*.cpu1.temp&format=json"
 
 #response = urllib2.urlopen(url)
 response2 = urllib2.urlopen(url2)
@@ -22,14 +22,16 @@ response2 = urllib2.urlopen(url2)
 #cr = csv.reader(response)
 data = json.load(response2)
 
+output = ""
+i = 0
 #for row in cr:
     #if x > 8494:
-while x > 8494:
+while i < 144:
     #8640
     #temp = row[2]
-    temp2 = data[0]['datapoints'][x][0]
+    temp2 = data[i]['datapoints'][len(data[i]['datapoints'])-2][0]
     #print temp
-    print temp2
+    #print temp2
 
     # if temp == '':
     #     print ser.write('0.0')
@@ -38,9 +40,13 @@ while x > 8494:
     # time.sleep(.5)
 
     if temp2 is None:
+        #output = output+"0;"
         ser.write('0.0')
     else:
-        ser.write(str(int(decimal.Decimal(temp2))) + ";")
-    time.sleep(.5)
-    x += 1
-
+        #output = output + str(int(round(temp2, 0))) + ";"
+        print ser.write(str(int(decimal.Decimal(temp2))) + ";")
+    time.sleep(.05)
+    i = i + 1
+#print output
+#ser.write(output)
+ser.write('f')

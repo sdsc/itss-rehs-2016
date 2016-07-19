@@ -5,51 +5,52 @@
 
 
 import serial
-
-ser = serial.Serial('/dev/cu.usbmodem1421',9600)
-
 import urllib2
 import csv
 import json
 import time
-x=4
-url ="https://graphite.sdsc.edu/render/?width=586&height=308&_salt=1467827717.345" \
-     "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle" \
-     "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_wio" \
-     "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_user" \
-     "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_system&areaMode=stacked&format=csv"
+ser = serial.Serial('/dev/cu.usbmodem1421',9600)
 
-url2 = "https://graphite.sdsc.edu/render/?width=586&height=308&_salt=1467827717.345" \
-      "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle" \
-      "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_wio" \
-      "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_user" \
-      "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_system&areaMode=stacked&format=json"
+while(1==1):
+    x=4
+    url ="https://graphite.sdsc.edu/render/?width=586&height=308&_salt=1467827717.345" \
+         "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle" \
+         "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_wio" \
+         "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_user" \
+         "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_system&areaMode=stacked&format=csv"
 
-response = urllib2.urlopen(url)
-response2 = urllib2.urlopen(url2)
+    url2 = "https://graphite.sdsc.edu/render/?width=586&height=308&_salt=1467827717.345" \
+          "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_idle" \
+          "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_wio" \
+          "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_user" \
+          "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_system&areaMode=stacked&format=json"
 
-cr = csv.reader(response)
-data = json.load(response2)
+    response = urllib2.urlopen(url)
+    response2 = urllib2.urlopen(url2)
 
-# for row in cr:
-#     if x % 8640==0:
-#         #8640
-#         color = str(int(decimal.Decimal(row[2])))
-#         print color
-#         ser.write(color+";")
-#         time.sleep(5)
-#     x += 1
+    cr = csv.reader(response)
+    data = json.load(response2)
 
-i = 3
-output = ""
-while i >= 0:
-    color = data[i]['datapoints'][len(data[i]['datapoints'])-2][0]
-    print color
-    if color is None:
-        ser.write('0.0')
-    else:
-        output = output + (str(int(round(color, 0))) + ";")
+    # for row in cr:
+    #     if x % 8640==0:
+    #         #8640
+    #         color = str(int(decimal.Decimal(row[2])))
+    #         print color
+    #         ser.write(color+";")
+    #         time.sleep(5)
+    #     x += 1
 
-    i = i - 1
-print output
-ser.write(output)
+    i = 3
+    output = ""
+    while i >= 0:
+        color = data[i]['datapoints'][len(data[i]['datapoints'])-2][0]
+        print color
+        if color is None:
+            ser.write('0.0')
+        else:
+            output = output + (str(int(round(color, 0))) + ";")
+
+        i = i - 1
+    print output
+    ser.write(output)
+    time.sleep(10)

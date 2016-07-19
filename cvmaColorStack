@@ -25,8 +25,14 @@ while(1==1):
           "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_user" \
           "&target=hosts.SDSC_CI.cvma3_sdsc_edu.cpu_system&areaMode=stacked&format=json"
 
+    url3 = "https://graphite.sdsc.edu/render/?width=586&height=308&_salt=1467827717.345" \
+           "&target=hosts.hpc.comet-test1.jobs.COMPLETED" \
+           "&target=hosts.hpc.comet-test1.jobs.RUNNING" \
+           "&target=hosts.hpc.comet-test1.jobs.PENDING" \
+           "&target=hosts.hpc.comet-test1.jobs.TOTAL&format=json"
+
     response = urllib2.urlopen(url)
-    response2 = urllib2.urlopen(url2)
+    response2 = urllib2.urlopen(url3)
 
     cr = csv.reader(response)
     data = json.load(response2)

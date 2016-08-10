@@ -1,0 +1,40 @@
+#
+# Everything commented out is what is used for the alternate
+# method of reading the code using csv
+# This is reading JSON
+
+import serial
+import decimal
+
+ser = serial.Serial('/dev/cu.usbmodem1421',9600)
+
+import urllib2
+import json
+import time
+
+url2 ="https://graphite.sdsc.edu/render/?target=facilities.sdsc_datacenter.electrical.CDUs.Comet.comet-r16-pdu1.devicepower&format=json"
+
+response2 = urllib2.urlopen(url2)
+
+data = json.load(response2)
+
+output = ""
+i = 0
+
+while i < 144:
+    firstPower = data[0]['datapoints'][i][0]
+    lastPower = data[0]['datapoints'][i + 1][0]
+    if(firstPower is None):
+        i=i+1
+    elif(lastPower is None):
+        i=i+1
+    else:
+        #print firstPower
+        #print lastPower
+        print ser.write(str(int(decimal.Decimal((lastPower*1000)-(firstPower*1000)))) + ";")
+        print (lastPower*1000)-(firstPower*1000)
+        time.sleep(.05)
+        i = i + 1
+#print output
+#ser.write(output)
+ser.write('f')

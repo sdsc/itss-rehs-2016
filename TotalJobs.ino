@@ -29,9 +29,9 @@ void serialEvent(){
     char ch = Serial.read();
     delay(5);
     if(ch =='c'){
-      //for(int i=0; i <light;i++){
-        //strip.setPixelColor(i, strip.Color(0,0,0));
-      //}
+      for(int i=0; i <light;i++){
+        strip.setPixelColor(i, strip.Color(0,0,0));
+      }
       light = -1;
       color = -1;
       jobs = 0;

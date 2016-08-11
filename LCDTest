@@ -1,0 +1,84 @@
+'''
+Test python sketch for Adafruit USB+Serial LCD backpack
+---> http://www.adafruit.com/category/63_96
+Adafruit invests time and resources providing this open source code,
+please support Adafruit and open-source hardware by purchasing
+products from Adafruit!
+Written by Limor Fried/Ladyada  for Adafruit Industries.
+BSD license, check license.txt for more information
+All text above must be included in any redistribution
+'''
+
+
+import serial
+import sys
+import time
+
+# 20x4 LCD
+#ROWS = 4
+#COLS = 20
+
+# 16x2 LCD:
+ROWS = 2
+COLS = 16
+
+def matrixwritecommand(commandlist):
+    commandlist.insert(0, 0xFE)
+    #ser.write(bytearray([0xFE]))
+    #time.sleep(0.1);
+    for i in range(0, len(commandlist)):
+         #print chr(commandlist[i]),
+         ser.write(chr(commandlist[i]))
+    #ser.write(bytearray(commandlist))
+
+ser = serial.Serial('/dev/cu.usbmodem1421', 9600)
+matrixwritecommand([0x58])
+
+# set size
+matrixwritecommand([0xD1, COLS, ROWS]);
+matrixwritecommand([0x58])
+
+# turn on display
+matrixwritecommand([0x42, 0])
+time.sleep(0.3);
+
+#Write Temperature
+ser.write("Temperature for ")
+ser.write("     Row 16     ")
+time.sleep(5)
+ser.write("  Temperature   ")
+ser.write("  Green = Low   ")
+time.sleep(5)
+ser.write("  Temperature   ")
+ser.write("  White = High  ")
+time.sleep(5)
+
+#Write Power
+ser.write("Power Input for ")
+ser.write("Row 16 over time")
+time.sleep(5)
+ser.write("  Power Input   ")
+ser.write("  Blue = low    ")
+time.sleep(5)
+ser.write("  Power Input   ")
+ser.write("  Pink = high   ")
+time.sleep(5)
+
+#Write Total Jobs
+ser.write("Total Jobs by % ")
+ser.write("Purple = Pending")
+time.sleep(5)
+ser.write("Total Jobs by % ")
+ser.write(" Blue = Running ")
+time.sleep(5)
+ser.write("Total Jobs by % ")
+ser.write("White = Finished")
+time.sleep(5)
+
+#clear
+matrixwritecommand([0x58])
+#ser.write("clear");
+time.sleep(0.5);
+
+
+exit()

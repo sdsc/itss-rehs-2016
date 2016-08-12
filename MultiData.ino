@@ -36,17 +36,17 @@ void tempTest(){
       //lcd.println("Temperatures for");
       //lcd.print("Rack 16 Systems");
 
-      if(newColor <= 33 && newColor !=0){
+      if(newColor <= 40 && newColor !=0){
         strip.setPixelColor(light, strip.Color(0,0,150));
       }
-      else if(newColor <=66){
-        strip.setPixelColor(light, strip.Color(50,50,150));
+      else if(newColor <=65){
+        strip.setPixelColor(light, strip.Color(0,150,100));
       }
-      else if(newColor <= 85){
-        strip.setPixelColor(light, strip.Color(100,100,150));
+      else if(newColor <= 80){
+        strip.setPixelColor(light, strip.Color(100,100,100));
       }
-      else if(newColor> 85){
-        strip.setPixelColor(light, strip.Color(150,150,150));
+      else if(newColor> 80){
+        strip.setPixelColor(light, strip.Color(150,100,50));
       }
       else{
 

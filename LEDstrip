@@ -1,0 +1,167 @@
+#
+# Everything commented out is what is used for the alternate
+# method of reading the code using csv
+# This is reading JSON
+
+
+import serial
+import decimal
+import urllib2
+import json
+import time
+import os
+import sys
+
+# 16x2 LCD:
+ROWS = 2
+COLS = 16
+
+
+def matrixwritecommand(commandlist):
+    commandlist.insert(0, 0xFE)
+    # ser.write(bytearray([0xFE]))
+    # time.sleep(0.1);
+    for i in range(0, len(commandlist)):
+        # print chr(commandlist[i]),
+        ser2.write(chr(commandlist[i]))
+        # ser.write(bytearray(commandlist))
+
+
+ser = serial.Serial('/dev/ttyACM0', 9600)
+ser2 = serial.Serial('/dev/ttyACM1', 9600)
+
+url = "https://graphite.sdsc.edu/render/?target=facilities.sdsc_datacenter.electrical.CDUs.Comet.comet-r16-pdu1.devicepower&format=json"
+url2 = "https://graphite.sdsc.edu/render/?target=hosts.hpc.comet-16*.sensors.socket*.cpu1.temp&format=json"
+url3 = "https://graphite.sdsc.edu/render/?width=586&height=308&_salt=1467827717.345" \
+       "&target=hosts.hpc.comet-test1.jobs.COMPLETED" \
+       "&target=hosts.hpc.comet-test1.jobs.RUNNING" \
+       "&target=hosts.hpc.comet-test1.jobs.PENDING" \
+       "&target=hosts.hpc.comet-test1.jobs.TOTAL&format=json"
+
+response = urllib2.urlopen(url)
+response2 = urllib2.urlopen(url2)
+response3 = urllib2.urlopen(url3)
+
+data = json.load(response2)
+data2 = json.load(response)
+data3 = json.load(response3)
+
+# set size
+matrixwritecommand([0xD1, COLS, ROWS]);
+matrixwritecommand([0x58])
+
+# turn on display
+matrixwritecommand([0x42, 0])
+time.sleep(0.3);
+
+# for row in cr:
+#     if x % 8640==0:
+#         #8640
+#         color = str(int(decimal.Decimal(row[2])))
+#         print color
+#         ser.write(color+";")
+#         time.sleep(5)
+#     x += 1
+
+
+# i = 3
+# while i >= 0:
+output = ""
+j = 0
+
+while j < 144:
+    color = data[j]['datapoints'][len(data[j]['datapoints']) - 2][0]
+    print color
+    if color is None:
+        ser.write('0.0')
+    else:
+        ser.write(str(int(round(color, 0))) + ";")
+
+    j = j + 1
+    time.sleep(.07)
+# print output
+# ser.write(output)
+ser.write('f')
+
+# Write Temperature
+ser2.write("Temperature for ")
+ser2.write("    Rack 16     ")
+time.sleep(4)
+ser2.write("  Temperature   ")
+ser2.write("   Blue = Low   ")
+time.sleep(4)
+ser2.write("  Temperature   ")
+ser2.write("  White = High  ")
+time.sleep(4)
+ser2.write("Temperature for ")
+ser2.write("    Rack 16     ")
+time.sleep(1)
+
+output = ""
+j = 1
+
+while j < 160:
+    firstPower = data2[0]['datapoints'][len(data2[0]['datapoints']) - j][0]
+    lastPower = data2[0]['datapoints'][len(data2[0]['datapoints']) - (j + 1)][0]
+    if (firstPower is None):
+        j = j + 1
+    elif (lastPower is None):
+        j = j + 1
+    else:
+        # print firstPower
+        # print lastPower
+        ser.write(str(int(decimal.Decimal((lastPower * 1000) - (firstPower * 1000)))) + ";")
+        print (lastPower * 1000) - (firstPower * 1000)
+        time.sleep(.05)
+        j = j + 1
+# print output
+# ser.write(output)
+ser.write('f')
+
+# Write Power
+ser2.write("Power Input for ")
+ser2.write("Rack16 Over Time")
+time.sleep(6)
+ser2.write("  Power Input   ")
+ser2.write("  Blue = Low    ")
+time.sleep(6)
+ser2.write("  Power Input   ")
+ser2.write("  Pink = High   ")
+time.sleep(6)
+
+j = 3
+
+output = ""
+while j >= 0:
+    # for row in cr:
+    #     if x % 8640==0:
+    #         #8640
+    #         color = str(int(decimal.Decimal(row[2])))
+    #         print color
+    #         ser.write(color+";")
+    #         time.sleep(5)
+    #     x += 1
+
+
+    color = data3[j]['datapoints'][len(data3[j]['datapoints']) - 2][0]
+    print color
+    if color is None:
+        ser.write('0.0')
+    else:
+        output = output + (str(int(round(color, 0))) + ";")
+
+    j = j - 1
+print output
+ser.write(output)
+
+# Write Total Jobs
+ser2.write("Total Jobs by % ")
+ser2.write("Purple = Pending")
+time.sleep(4)
+ser2.write("Total Jobs by % ")
+ser2.write(" Blue = Running ")
+time.sleep(4)
+ser2.write("Total Jobs by % ")
+ser2.write("White = Finished")
+
+execfile('/home/pi/Desktop/LEDstrip.py')

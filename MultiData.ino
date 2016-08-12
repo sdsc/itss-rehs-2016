@@ -1,15 +1,6 @@
 #include <Adafruit_NeoPixel.h>
 
-
 #define PIN 6
-#if defined(ARDUINO_ARCH_SAMD) || defined(__SAM3X8E__)
-  // use pin 18 with Due, pin 1 with Zero or M0 Pro
-  #define lcd Serial1
-#else
-  #include <SoftwareSerial.h>
-  // Create a software serial port!
-  SoftwareSerial lcd = SoftwareSerial(0,2);
-#endif
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(144, PIN, NEO_GRB + NEO_KHZ800);
 const int MaxChars = 20;
@@ -31,33 +22,6 @@ bool first = true;
 
 void setup() {
   strip.begin();
-  lcd.begin(9600);
-
-//sets size of display
-  lcd.write(0xFE);
-  lcd.write(0xD1);
-  lcd.write(16);
-  lcd.write(2);
-  delay(10);
-
-//sets contrast
-  lcd.write(0xFE);
-  lcd.write(0x50);
-  lcd.write(200);
-  delay(10);
-
-//sets brightness
-  lcd.write(0xFE);
-  lcd.write(0x99);
-  lcd.write(255);
-  delay(10);
-
-//turns off cursors
-  lcd.write(0xFE);
-  lcd.write(0x4B);
-  lcd.write(0xFE);
-  lcd.write(0x54);
-
   //strip.show();
   Serial.begin(9600);
   //strip.setPixelColor(0, strip.Color(255,255,255));
@@ -68,28 +32,21 @@ void loop() {
 }
 
 void tempTest(){
-      lcd.write(0xFE);
-      lcd.write(0x58);
-      delay(10);
 
-      lcd.write(0xFE);
-      lcd.write(0x48);
-      delay(10);
-
-      lcd.println("Temperatures for");
-      lcd.print("Rack 16 Systems");
+      //lcd.println("Temperatures for");
+      //lcd.print("Rack 16 Systems");
 
       if(newColor <= 33 && newColor !=0){
-        strip.setPixelColor(light, strip.Color(0,150,0));
+        strip.setPixelColor(light, strip.Color(0,0,150));
       }
       else if(newColor <=66){
-        strip.setPixelColor(light, strip.Color(150,150,50));
+        strip.setPixelColor(light, strip.Color(50,50,150));
       }
       else if(newColor <= 85){
-        strip.setPixelColor(light, strip.Color(100,100,100));
+        strip.setPixelColor(light, strip.Color(100,100,150));
       }
       else if(newColor> 85){
-        strip.setPixelColor(light, strip.Color(150,0,0));
+        strip.setPixelColor(light, strip.Color(150,150,150));
       }
       else{
 
@@ -100,52 +57,24 @@ void tempTest(){
 }
 
 void power(){
-      lcd.write(0xFE);
-      lcd.write(0x58);
-      delay(10);
-
-      lcd.write(0xFE);
-      lcd.write(0x48);
-      delay(10);
-
-      lcd.println("Power Usage");
-      lcd.print("low-high");
+      //lcd.println("Power Usage");
+      //lcd.print("low-high");
 
       Serial.print(light);
-      if(newColor< 0){
-        strip.setPixelColor(light, strip.Color(lastColor+(newColor*20),0,150));
-        lastColor=lastColor+(newColor*20);
-      }
-      else{
-        strip.setPixelColor(light, strip.Color(lastColor+(newColor*20),0,150));
-        lastColor=lastColor+(newColor*20);
-      }
+      strip.setPixelColor(light, strip.Color(lastColor+newColor,0,150));
+      lastColor=lastColor+newColor;
+
       strValue;
       index = 0;
       light++;
    }
 
 void totalJobs(){
-      lcd.write(0xFE);
-      lcd.write(0x58);
-      delay(10);
 
-      lcd.write(0xFE);
-      lcd.write(0x48);
-      delay(10);
-
-      lcd.write(0xFE);
-      lcd.write(0x51);
-      delay(10);
-
-      lcd.println("Total Jobs");
-      lcd.println("Pending, purple");
-      lcd.println("Running, blue");
-      lcd.println("Completed, white");
-
-      lcd.write(0xFE);
-      lcd.write(0x52);
-      delay(10);
+      //lcd.println("Total Jobs");
+      //lcd.println("Pending, purple");
+      //lcd.println("Running, blue");
+      //lcd.println("Completed, white");
 
       Serial.print(light);
       if(first){
